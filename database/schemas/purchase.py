@@ -8,7 +8,8 @@ class PurchaseBase(BaseModel):
     price: int
     user_id: UUID
 
-class PurchaseCreate(PurchaseBase): pass
+class PurchaseCreate(PurchaseBase): 
+    created_at: datetime
 
 class PurchaseRead(PurchaseBase):
     id: UUID
