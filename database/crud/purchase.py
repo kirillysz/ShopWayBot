@@ -34,3 +34,5 @@ class PurchaseCrud:
         await db.commit()
         await db.refresh(new_purchase)
         return PurchaseRead.model_validate(new_purchase)
+    
+    

@@ -4,7 +4,10 @@ from config import config
 from asyncio import run
 
 from src.log.logging import _logger
+
 from handlers.user_commands import router as commands_router
+from handlers.user_messages import router as messages_router
+from handlers.utils.calc import router as calc_router
 
 from database.core.initial_tables import create_tables
 
@@ -13,8 +16,10 @@ async def main():
     dp = Dispatcher()
 
     await bot.delete_webhook(drop_pending_updates=True)
-    dp.include_router(
-        commands_router
+    dp.include_routers(
+        commands_router,
+        messages_router,
+        calc_router
     )
 
     await create_tables()

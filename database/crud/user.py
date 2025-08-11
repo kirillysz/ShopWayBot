@@ -1,5 +1,3 @@
-from fastapi import HTTPException
-
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
@@ -10,21 +8,18 @@ class UserCrud:
     @staticmethod
     async def check_existing(db: AsyncSession, telegram_id: int) -> bool:
         query = select(User).where(User.telegram_id == telegram_id)
-
         result = await db.execute(query)
         existing_user = result.scalars().first()
-
         return existing_user is not None
     
     @staticmethod
-    async def add_user(db: AsyncSession, user_data: UserCreate) -> UserRead:
-        telegram_id = user_data.telegram_id
+    async def add_user(db: AsyncSession, user_data: UserCreate) -> UserRead | None:
+        telegram_id = getattr(user_data, "telegram_id", None)
         if telegram_id is None:
-            raise HTTPException(status_code=400, detail="telegram_id is required")
+            return None
 
-        is_exists = await UserCrud.check_existing(db, telegram_id)
-        if is_exists:
-            raise HTTPException(status_code=409, detail="User already exists")
+        if await UserCrud.check_existing(db, telegram_id):
+            return None
 
         user = User(
             telegram_id=telegram_id,
@@ -36,3 +31,13 @@ class UserCrud:
 
         return UserRead.model_validate(user)
     
+    @staticmethod
+    async def get_user(db: AsyncSession, telegram_id: int) -> UserRead | None:
+        query = select(User).where(User.telegram_id == telegram_id)
+        result = await db.execute(query)
+
+        user = result.scalars().first()
+        if user is None:
+            return None
+        
+        return UserRead.model_validate(user)
