@@ -4,12 +4,12 @@ from datetime import datetime
 from pydantic import BaseModel, ConfigDict
 
 class PurchaseBase(BaseModel):
-    name: str
-    price: int
-    user_id: UUID
+    item_name: str
+    telegram_id: int
 
 class PurchaseCreate(PurchaseBase): 
     created_at: datetime
+    link: str
 
 class PurchaseRead(PurchaseBase):
     id: UUID

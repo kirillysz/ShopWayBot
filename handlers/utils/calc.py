@@ -34,8 +34,8 @@ async def return_calc(message: Message, state: FSMContext):
     price_with_return = round(price_with_return_kzt * pair_price, 2)
 
     await message.answer(
-        f"Итоговая цена (без возврата) = {price_no_return}Р ({price_no_return_kzt}КЗТ)\n"
-        f"Итоговая цена (с возвратом) = {price_with_return}Р ({price_with_return_kzt}КЗТ)"
+        f"Итоговая цена (без возврата) = {price_no_return}Р\n"
+        f"Итоговая цена (с возвратом) = {price_with_return}Р"
     )
 
     await state.clear()

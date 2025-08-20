@@ -9,30 +9,29 @@ from database.schemas.purchase import PurchaseRead, PurchaseCreate
 
 class PurchaseCrud:
     @staticmethod
-    async def check_existing(db: AsyncSession, user_id: UUID, link: str) -> bool:
-        query = select(Purchase).where((Purchase.user_id == user_id) & (Purchase.link == link))
-
-        result = await db.execute(query)
-        existing_purchase = result.scalars().first()
-
-        return existing_purchase is not None
+    async def check_existing(db: AsyncSession, user_id: int, link: str) -> bool:
+        result = await db.execute(
+            select(Purchase)
+            .where(Purchase.telegram_id == user_id)
+            .where(Purchase.link == link)
+        )
+        return result.scalars().first() is not None
     
     @staticmethod
-    async def add_purchase(db: AsyncSession, purchase_data: PurchaseCreate) -> PurchaseRead:
-        is_exists = await PurchaseCrud.check_existing(db, purchase_data.user_id, purchase_data.link)
+    async def add_purchase(db: AsyncSession, purchase_data: dict) -> PurchaseRead:
+        is_exists = await PurchaseCrud.check_existing(db, purchase_data.telegram_id, purchase_data.link)
         if is_exists:
             raise HTTPException(status_code=409, detail="Purchase already exists")
         
         new_purchase = Purchase(
-            name=purchase_data.name,
-            price=purchase_data.price,
+            item_name=purchase_data.item_name,
             link=purchase_data.link,
-            user_id=purchase_data.user_id,
+            telegram_id=purchase_data.telegram_id,
         )
         db.add(new_purchase)
 
         await db.commit()
         await db.refresh(new_purchase)
+        
         return PurchaseRead.model_validate(new_purchase)
-    
-    
+        

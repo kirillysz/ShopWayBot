@@ -1,6 +1,3 @@
-from aiogram import Bot, Dispatcher
-
-from config import config
 from asyncio import run
 
 from src.log.logging import _logger
@@ -11,10 +8,10 @@ from handlers.utils.calc import router as calc_router
 
 from database.core.initial_tables import create_tables
 
-async def main():
-    bot = Bot(token=config.BOT_TOKEN)
-    dp = Dispatcher()
+from constants import BOT as bot
+from constants import DP as dp
 
+async def main():
     await bot.delete_webhook(drop_pending_updates=True)
     dp.include_routers(
         commands_router,

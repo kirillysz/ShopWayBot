@@ -7,5 +7,6 @@ class Config:
     BOT_TOKEN: str = getenv("BOT_TOKEN")
     DATABASE_URL: str = getenv("DATABASE_URL")
     EXCHANGE_TOKEN: str = getenv("EXCHANGE_TOKEN")
+    MANAGER_IDS: int = getenv("MANAGER_IDS")
 
 config = Config()
